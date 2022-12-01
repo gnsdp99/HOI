@@ -1,0 +1,1 @@
+python detect.py --save-txt --source D:/train2017/train2017 --project out/train --save-conf --conf-thres 0.001 --iou-thres 0.001
