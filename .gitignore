@@ -1,2 +1,10 @@
-venv/
-openpose/
+__pycache__/
+cfg/
+data/
+labels/
+models/
+utils/
+*.txt
+!requirements.txt
+yolov7.pt
+detect.py
