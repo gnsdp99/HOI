@@ -1,14 +1,7 @@
 import numpy as np
 import pandas as pd
 
-o_mid = 0 # object's mid point
-p_mid = 0 # person's mid point
-k_h, k_rh, k_lh, k_rf, k_lf = keypoints # keypoint of head, right hand, left hand, right foot, left foot
-
-features = [o_mid - p_mid, o_mid - k_h, o_mid - k_rh, o_mid - k_lh, o_mid - k_rf, o_mid - k_lf] # o_mid로부터 각 좌표까지의 거리
-label = ['non-interact', 'interact']
-
-X_train, X_test, y_train, y_test 
+X_train, X_test, y_train, y_test
 
 def relu(x):
     return np.maximum(0, x)
@@ -42,3 +35,43 @@ def forward(network, x):
     y = softmax(a3)
     return y
 
+def cross_entropy_ohe(y, t): 
+    if y.ndim == 1: 
+        y = y.reshape(1, y.size) 
+        t = t.reshape(1, t.size) 
+    batch_size = y.shape[0] 
+    loss = -np.sum(t * np.log(y + 1e-7)) / batch_size
+    return loss
+
+def numerical_gradient(f, x: np.array): 
+    h = 1e-4 
+    grad = np.zeros_like(x) 
+    for idx in range(x.size):
+        temp_val = x[idx] 
+        x[idx] = temp_val + h 
+        fxh1 = f(x)
+        x[idx] = temp_val - h 
+        fxh2 = f(x) 
+        grad[idx] = (fxh1 - fxh2) / (2*h) 
+        x[idx] = temp_val 
+        return grad 
+    
+def gradient_descent(f, init_x: np.array, lr=0.01, step_num=100):
+    x = init_x
+    for _ in range(step_num): 
+        grad = numerical_gradient(f, x) 
+        x -= lr * grad 
+    return x 
+
+def loss(self, x, t):
+        y = self.predict(x)
+        return cross_entropy_ohe(y, t)
+    
+def accuracy(self, x, t):
+        y = self.predict(x) 
+        y = np.argmax(y, axis=1) 
+        t = np.argmax(t, axis=1) 
+        acc = np.sum(y == t) / float(x.shape[0]) 
+        return acc
+    
+    
